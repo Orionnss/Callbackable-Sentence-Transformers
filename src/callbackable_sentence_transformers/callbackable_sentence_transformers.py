@@ -11,7 +11,7 @@ from sentence_transformers.util import fullname, batch_to_device
 from tqdm.autonotebook import trange
 from transformers import is_torch_npu_available
 
-class SentenceTransformer(SentenceTransformer):
+class CallbackableSentenceTransformer(SentenceTransformer):
         def fit(
         self,
         train_objectives: Iterable[Tuple[DataLoader, nn.Module]],
