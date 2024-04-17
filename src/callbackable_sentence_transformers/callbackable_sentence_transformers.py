@@ -173,7 +173,8 @@ class SentenceTransformer(SentenceTransformer):
                         if use_amp:
                             with torch.autocast(device_type=self.device.type):
                                 loss_value = loss_model(features, labels)
-                                callback_train(loss_value, epoch, training_steps)
+                                if callback_train is not None:
+                                    callback_train(loss_value, epoch, training_steps)
 
                             scale_before_step = scaler.get_scale()
                             scaler.scale(loss_value).backward()
@@ -185,7 +186,8 @@ class SentenceTransformer(SentenceTransformer):
                             skip_scheduler = scaler.get_scale() != scale_before_step
                         else:
                             loss_value = loss_model(features, labels)
-                            callback_train(loss_value, epoch, training_steps)
+                            if callback_train is not None:
+                                callback_train(loss_value, epoch, training_steps)
                             loss_value.backward()
                             torch.nn.utils.clip_grad_norm_(loss_model.parameters(), max_grad_norm)
                             optimizer.step()
