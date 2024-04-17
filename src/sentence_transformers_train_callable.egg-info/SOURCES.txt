@@ -1,8 +1,8 @@
 LICENSE
 README.md
 pyproject.toml
-src/sentence_transformers/__init__.py
-src/sentence_transformers/sentence_transformers.py
+src/callbackable_sentence_transformers/__init__.py
+src/callbackable_sentence_transformers/callbackable_sentence_transformers.py
 src/sentence_transformers_train_callable.egg-info/PKG-INFO
 src/sentence_transformers_train_callable.egg-info/SOURCES.txt
 src/sentence_transformers_train_callable.egg-info/dependency_links.txt
