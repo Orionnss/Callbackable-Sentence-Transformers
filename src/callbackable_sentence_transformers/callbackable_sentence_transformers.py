@@ -33,7 +33,7 @@ class CallbackableSentenceTransformer(SentenceTransformer):
         checkpoint_path: str = None,
         checkpoint_save_steps: int = 500,
         checkpoint_save_total_limit: int = 0,
-        callback_train: Callable[[float, int, int], None] = None,
+        callback_after_train_batch: Callable[[float, int, int], None] = None,
     ):
             """
     Train the model with the given training objective
@@ -62,6 +62,9 @@ class CallbackableSentenceTransformer(SentenceTransformer):
     :param checkpoint_path: Folder to save checkpoints during training
     :param checkpoint_save_steps: Will save a checkpoint after so many steps
     :param checkpoint_save_total_limit: Total number of checkpoints to store
+    :param callback_after_train_batch: Callback function that is invoked after each training batch.
+            It must accept the following parameters :
+            `loss_value`, `epoch`, `training_steps`
     """
 
             ##Add info to model card
@@ -173,8 +176,8 @@ class CallbackableSentenceTransformer(SentenceTransformer):
                         if use_amp:
                             with torch.autocast(device_type=self.device.type):
                                 loss_value = loss_model(features, labels)
-                                if callback_train is not None:
-                                    callback_train(loss_value, epoch, training_steps)
+                                if callback_after_train_batch is not None:
+                                    callback_after_train_batch(loss_value, epoch, training_steps)
 
                             scale_before_step = scaler.get_scale()
                             scaler.scale(loss_value).backward()
@@ -186,8 +189,8 @@ class CallbackableSentenceTransformer(SentenceTransformer):
                             skip_scheduler = scaler.get_scale() != scale_before_step
                         else:
                             loss_value = loss_model(features, labels)
-                            if callback_train is not None:
-                                callback_train(loss_value, epoch, training_steps)
+                            if callback_after_train_batch is not None:
+                                callback_after_train_batch(loss_value, epoch, training_steps)
                             loss_value.backward()
                             torch.nn.utils.clip_grad_norm_(loss_model.parameters(), max_grad_norm)
                             optimizer.step()
